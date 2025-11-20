@@ -1,21 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from engine import jalankan_kode
-import sys, os
+import sys
 
-def main():
-    if len(sys.argv) < 2:
-        print("Gunakan: indsc file.isc")
-        exit()
+if len(sys.argv) < 2:
+    print("Gunakan: indsc file.isc")
+    sys.exit()
 
-    path = sys.argv[1]
-    if not os.path.exists(path):
-        print("File tidak ditemukan:", path)
-        exit()
-
-    with open(path, "r", encoding="utf-8") as f:
-        kode = f.read()
-
-    jalankan_kode(kode)
-
-if __name__ == "__main__":
-    main()
+with open(sys.argv[1]) as f:
+    jalankan_kode(f.read())
