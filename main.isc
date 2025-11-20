@@ -1,0 +1,14 @@
+tulis "Halo dari IndSC Bahasa Indonesia!"
+
+tanya nama
+tulis nama
+
+umur = 10
+tulis umur
+
+jika umur >= 10:
+    tulis "Kamu cukup umur"
+    tulis "Selamat!"
+
+ulang dari 1 sampai 5:
+    tulis i
