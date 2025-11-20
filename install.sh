@@ -1,28 +1,19 @@
 #!/bin/bash
 
-echo "[*] Menginstal IndSC..."
+echo "[*] Menginstal IndSC (Termux)..."
 
-INSTALL_DIR="/usr/local/bin"
-TARGET="$INSTALL_DIR/indsc"
+PREFIX="$HOME/.local/bin"
+SHARE="$HOME/.local/share/indsc"
+mkdir -p "$PREFIX" "$SHARE"
 
-# Buat folder sementara
-TMP=$(mktemp -d)
+curl -sL "https://raw.githubusercontent.com/RedcoreID/indsc/main/engine.py" -o "$SHARE/engine.py"
+curl -sL "https://raw.githubusercontent.com/RedcoreID/indsc/main/run" -o "$PREFIX/indsc"
 
-echo "[*] Download engine..."
-curl -sL "https://raw.githubusercontent.com/RedcoreID/indsc/main/engine.py" -o "$TMP/engine.py"
+chmod +x "$PREFIX/indsc"
 
-echo "[*] Download runner..."
-curl -sL "https://raw.githubusercontent.com/RedcoreID/indsc/main/run" -o "$TMP/indsc"
+if ! grep -q "$PREFIX" <<< "$PATH"; then
+    echo "export PATH=\$PATH:$PREFIX" >> ~/.bashrc
+fi
 
-chmod +x "$TMP/indsc"
-
-# Pasang
-echo "[*] Memasang ke $INSTALL_DIR..."
-sudo mv "$TMP/indsc" "$TARGET"
-
-# Pastikan ada engine di /usr/local/share
-mkdir -p /usr/local/share/indsc
-sudo mv "$TMP/engine.py" /usr/local/share/indsc/engine.py
-
-echo "[*] Selesai! Jalankan dengan:"
-echo "    indsc file.isc"
+echo "[*] Instalasi selesai!"
+echo "Jalankan: indsc main.isc"
