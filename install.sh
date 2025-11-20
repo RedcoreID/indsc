@@ -1,50 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
-REPO_URL="https://raw.githubusercontent.com/RedcoreID/indsc/main"
-INSTALL_DIR="/opt/indsc"
-BINARY_PATH="/usr/local/bin/indsc"
+REPO="RedcoreID/indsc"
+BIN_DIR="$HOME/.local/bin"
+mkdir -p "$BIN_DIR"
 
-echo "=== INDSC Installer ==="
-echo "[*] Checking environment..."
+echo "[*] Mendapatkan rilis terbaru..."
 
-# Detect OS
-if [[ "$PREFIX" == *"/data/data/com.termux"* ]]; then
-    ENV="termux"
-    echo "[+] Detected Termux"
-else
-    ENV="linux"
-    echo "[+] Detected Linux"
-fi
+ASSET=$(curl -s https://api.github.com/repos/$REPO/releases/latest | \
+  grep browser_download_url | grep -i "$(uname -m)" | head -n1 | cut -d '"' -f 4)
 
-# Install python if missing
-if ! command -v python3 &> /dev/null; then
-    echo "[*] Python3 tidak ditemukan, menginstall..."
-    if [[ $ENV == "termux" ]]; then
-        pkg install python -y
-    else
-        sudo apt update && sudo apt install python3 -y
-    fi
-fi
+echo "[*] Download dari:"
+echo "$ASSET"
 
-# Create install directory
-echo "[*] Creating install directory..."
-sudo mkdir -p $INSTALL_DIR
+curl -L "$ASSET" -o "$BIN_DIR/indsc"
+chmod +x "$BIN_DIR/indsc"
 
-# Download core files
-echo "[*] Downloading runtime..."
-sudo curl -s -o $INSTALL_DIR/run.py "$REPO_URL/run.py"
-sudo curl -s -o $INSTALL_DIR/engine.py "$REPO_URL/engine.py"
-sudo curl -s -o $INSTALL_DIR/main.isc "$REPO_URL/main.isc"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
-# Create secure launcher
-echo "[*] Creating launcher..."
-sudo bash -c "cat <<EOF > $BINARY_PATH
-#!/bin/bash
-exec -a indsc-core python3 \"$INSTALL_DIR/run.py\" \"\$@\"
-EOF"
-
-sudo chmod +x $BINARY_PATH
-
-echo "[+] Install complete!"
-echo "[+] Jalankan: indsc main.isc"
-exit 0
+echo "✔ Install selesai!"
+echo "Jalankan: indsc main.isc"
