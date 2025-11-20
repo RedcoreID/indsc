@@ -1,22 +1,28 @@
-#!/usr/bin/env bash
-set -e
+#!/bin/bash
 
-REPO="RedcoreID/indsc"
-BIN_DIR="$HOME/.local/bin"
-mkdir -p "$BIN_DIR"
+echo "[*] Menginstal IndSC..."
 
-echo "[*] Mendapatkan rilis terbaru..."
+INSTALL_DIR="/usr/local/bin"
+TARGET="$INSTALL_DIR/indsc"
 
-ASSET=$(curl -s https://api.github.com/repos/$REPO/releases/latest | \
-  grep browser_download_url | grep -i "$(uname -m)" | head -n1 | cut -d '"' -f 4)
+# Buat folder sementara
+TMP=$(mktemp -d)
 
-echo "[*] Download dari:"
-echo "$ASSET"
+echo "[*] Download engine..."
+curl -sL "https://raw.githubusercontent.com/RedcoreID/indsc/main/engine.py" -o "$TMP/engine.py"
 
-curl -L "$ASSET" -o "$BIN_DIR/indsc"
-chmod +x "$BIN_DIR/indsc"
+echo "[*] Download runner..."
+curl -sL "https://raw.githubusercontent.com/RedcoreID/indsc/main/run" -o "$TMP/indsc"
 
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+chmod +x "$TMP/indsc"
 
-echo "✔ Install selesai!"
-echo "Jalankan: indsc main.isc"
+# Pasang
+echo "[*] Memasang ke $INSTALL_DIR..."
+sudo mv "$TMP/indsc" "$TARGET"
+
+# Pastikan ada engine di /usr/local/share
+mkdir -p /usr/local/share/indsc
+sudo mv "$TMP/engine.py" /usr/local/share/indsc/engine.py
+
+echo "[*] Selesai! Jalankan dengan:"
+echo "    indsc file.isc"
