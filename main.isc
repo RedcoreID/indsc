@@ -1,14 +1,7 @@
-tulis "Halo dari IndSC Bahasa Indonesia!"
+tulis "TES IND"
+buah = ["apel","durian","jeruk"]
+tulis buah[1]
 
-tanya nama
-tulis nama
-
-umur = 10
-tulis umur
-
-jika umur >= 10:
-    tulis "Kamu cukup umur"
-    tulis "Selamat!"
-
-ulang dari 1 sampai 5:
-    tulis i
+orang = {nama: "IndSC", umur: 10}
+tulis orang.nama
+tulis orang.umur
